@@ -27,7 +27,7 @@ def make_ihdr_data(width, height, bit_depth=8, color_type='rgb', comp_meth=0, fi
 
 def make_png(data_chunks, width=100, height=100):
     d = b''
-    d += bytes([137, 80, 78, 71, 13, 10, 26, 10]) # magic
+    d += bytes(bytearray([137, 80, 78, 71, 13, 10, 26, 10])) # magic
 
     chunks = [(IHDR, make_ihdr_data(width, height))]
     chunks += [(IDAT, c) for c in data_chunks]
