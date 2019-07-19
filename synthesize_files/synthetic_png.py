@@ -24,12 +24,17 @@ def make_ihdr_data(width, height, bit_depth=8, color_type='rgb', comp_meth=0, fi
     assert len(d) == 13
     return d
 
+def make_ihdr_chunk(width, height):
+    return make_png_chunk(IHDR, make_ihdr_data(width, height))
 
+def make_iend_chunk():
+    return make_png_chunk(IEND, b'')
+
+PNG_MAGIC = bytes(bytearray([137, 80, 78, 71, 13, 10, 26, 10])) # magic
 def make_png(data_chunks, width=100, height=100):
     d = b''
-    d += bytes(bytearray([137, 80, 78, 71, 13, 10, 26, 10])) # magic
-
-    chunks = [(IHDR, make_ihdr_data(width, height))]
-    chunks += [(IDAT, c) for c in data_chunks]
-    chunks += [(IEND, b'')]
-    return d + b''.join(make_png_chunk(v[0], v[1]) for v in chunks)
+    d += PNG_MAGIC
+    d + make_ihdr_chunk(width, height)
+    d += b''.join(make_png_chunk(IDAT, c) for c in data_chunks)
+    d += make_iend_chunk()
+    return d
